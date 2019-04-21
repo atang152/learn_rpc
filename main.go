@@ -12,7 +12,7 @@ import (
 // Resource: https://golang.org/pkg/net/rpc/
 
 // API is a receiver which we will use Register to publishes the receiver's methods in the DefaultServer.
-type API int
+type API struct{}
 
 // Person is a struct that A will use to expose it's RPC method
 type Person struct {
@@ -21,7 +21,7 @@ type Person struct {
 
 // SayHello is a RPC method
 // RPC methods must look schematically like: func (t *T) MethodName(argType T1, replyType *T2) error
-func (a *API) SayHello(person Person, reply *Person) error {
+func (API) SayHello(person Person, reply *Person) error {
 	*reply = person
 	return nil
 }
@@ -35,7 +35,7 @@ func main() {
 	// Allocate memory, returns a pointer to API and register the new object that we can call our method
 	api := new(API)
 
-	// Use this function to simulate a connection.net.
+	// Use this function to simulate a connection.
 	// Pipe creates a synchronous, in-memory, full duplex network connection.https://golang.org/pkg/net/#Pipe
 	connA, connB := net.Pipe()
 	defer connA.Close()
@@ -65,7 +65,7 @@ func main() {
 
 	a := Person{"Anto"}
 
-	// Setup an RPC Client (via connB) and call the server.
+	// Setup a RPC Client (via connB) and call the server.
 	client := rpc.NewClient(connB)
 
 	// Call RPC method through server
